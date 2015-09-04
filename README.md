@@ -30,7 +30,7 @@ A bash script to automate the initial stuff for new `css` modules.
 To be able to manipulate the `package.json` file with the variables you passed, it's necessary to have [jq](https://stedolan.github.io/jq/) installed.
 
 ### What this script do
-After ask you some fastb information about the module/folder (keep in mind that most of that have a default value):
+After ask you some fast information about the module/folder (keep in mind that most have a default value):
 
 - Add the title and description to a `README.md` file
 - Create a `src` directory (or the name you choose)
