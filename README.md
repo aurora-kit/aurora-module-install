@@ -14,7 +14,8 @@ A bash script to automate the initial stuff for new `css` modules.
     $ rm -rf .git
   ```
 
-  You could also download the files and won't have to execute the second step.
+  Removeing this reference, the installer will `init` the repository in case you'll pass the url. 
+  You could always download the files directly and won't have to remove this reference.
 
 3. Launch the installe
 
