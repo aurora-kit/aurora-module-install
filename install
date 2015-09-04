@@ -1,0 +1,170 @@
+#!/bin/bash
+
+# Ask the Module name
+def=${PWD##*/}
+echo What\'s the name of the module? \($def\)
+read proj
+proj=${proj:-$def}
+
+# Ask a description
+echo A module description, please? 
+read desc
+
+# Ask a repository
+echo Git Repository. 
+read repo
+
+# Ask a author
+user=$(whoami)
+echo Author name \($user\)
+read author
+author=${author:-$user}
+
+# Ask src folder 
+echo What\'s the folder of the \`src\` files? \(src\)
+read src
+src=${src:-src}
+
+# Ask output file
+echo What\'s the css output name? \($proj.scss\)
+read out
+out=${out:-$proj}
+filename=$out.scss
+
+
+# Ask debug file
+read -r -p "Do you need a debug file? [Y/n] " response
+response=${response:-y}
+
+
+
+### Check ###
+echo 
+echo "Check if the information is correct:"
+echo "===================================="
+echo "Project: $proj"
+echo "Description: $desc"
+echo "Author: $author"
+echo "Git repository: $repo"
+echo "src folder: $src"
+echo "output filename: $filename"
+echo "Debug: $response"
+echo 
+read -r -p "Are you sure to continue? [Y/n] " check
+echo 
+check=${check:-y}
+case $check in
+    [yY][eE][sS]|[yY]) 
+        ;;
+    *)
+        exit 1
+        ;;
+esac
+
+
+
+
+### Apply ###
+# Description on README
+printf "# $proj\n$desc" > README.md
+# Create src folder
+mkdir $src
+# Create basic files
+files=( components debug defaults elements functions helpers objects settings )
+for i in "${files[@]}"
+do
+  cap="$(tr '[:lower:]' '[:upper:]' <<< ${i:0:1})${i:1}"
+  echo \/\/ $proj \:\: $cap > $src\/\_$i.scss
+done
+# Create main file
+for i in "${files[@]}"
+do
+  if [ $i != "debug" ]
+    then
+    printf "@import \'$i\';\n" >> $src\/$filename
+  fi
+done
+# Create Debug file
+case $response in
+    [yY][eE][sS]|[yY]) 
+        printf "@import 'settings';\n@import 'functions';\n@import 'debug';\n" > $src\/$out-debug.scss
+        ;;
+    *)
+        
+        ;;
+esac
+# jq
+if [ ! -z "$repo" ]; then
+  bugs=$repo/issues
+fi
+jq 'del(.name,.description,.repository.url,.bugs.url,.homepage,.author,.keywords)' _install/package.json > tmp-package.json 
+printf '{"name":"%s","description":"%s","repository":{"url":"%s"},"bugs":{"url":"%s"},"homepage":"%s","author":"%s"}\n' "$proj" "$desc" "$repo" "$bugs" "$repo" "$author" > tmp-custom.json
+jq -s '.[0] * .[1]' tmp-package.json tmp-custom.json > package.json
+rm tmp-package.json tmp-custom.json
+
+#Gulp and dot files
+read -r -p "Do you want the gulp and other files? [Y/n] " gulp
+gulp=${gulp:-y}
+case $gulp in
+    [yY][eE][sS]|[yY]) 
+        cp _install/gulpfile.js gulpfile.js
+        cp _install/.editorconfig .editorconfig
+        cp _install/.gitignore .gitignore
+        cp _install/.csscomb.json .csscomb.json
+        ;;
+    *)
+        ;;
+esac
+
+# Git init
+if [[ ! -d .git && ! -z "$repo" ]]; then
+  read -r -p "Do you want to init the repo? [Y/n] " git
+  git=${git:-y}
+  case $git in
+      [yY][eE][sS]|[yY]) 
+          git init
+          git add .
+          git commit -m "Initial commit"
+          git remote add origin $repo
+          git push -u origin master
+          ;;
+      *)
+          ;;
+  esac
+fi
+
+# npm install
+read -r -p "Do you want install the packages? [Y/n] " packs
+packs=${packs:-y}
+case $packs in
+    [yY][eE][sS]|[yY]) 
+        sudo npm i
+        ;;
+    *)
+        ;;
+esac
+
+# remove installer
+read -r -p "Do you want to remove the installer assets? [Y/n] " inst
+inst=${inst:-y}
+case $inst in
+    [yY][eE][sS]|[yY]) 
+        rm -r _install
+        rm install
+        ;;
+    *)
+        ;;
+esac
+
+echo 
+echo
+echo Thank you, enjoy your pack!
+echo 
+
+
+
+
+
+
+
+
