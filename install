@@ -63,14 +63,13 @@ esac
 
 
 
-
 ### Apply ###
 # Description on README
 printf "# $proj\n$desc" > README.md
 # Create src folder
 mkdir $src
 # Create basic files
-files=( components debug defaults elements functions helpers objects settings )
+files=( settings functions defaults elements objects components helpers debug )
 for i in "${files[@]}"
 do
   cap="$(tr '[:lower:]' '[:upper:]' <<< ${i:0:1})${i:1}"
