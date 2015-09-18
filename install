@@ -102,7 +102,7 @@ jq -s '.[0] * .[1]' tmp-package.json tmp-custom.json > package.json
 rm tmp-package.json tmp-custom.json
 
 #Gulp and dot files
-read -r -p "Do you want the gulp and other files? [Y/n] " gulp
+read -r -p "Do you want the gulp and other dot files? [Y/n] " gulp
 gulp=${gulp:-y}
 case $gulp in
     [yY][eE][sS]|[yY]) 
