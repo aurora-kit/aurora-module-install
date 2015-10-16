@@ -26,7 +26,7 @@ read src
 src=${src:-src}
 
 # Ask output file
-echo What\'s the css output name? \($proj.scss\)
+echo What\'s the css output name without extension? \($proj.scss\)
 read out
 out=${out:-$proj}
 filename=$out.scss
