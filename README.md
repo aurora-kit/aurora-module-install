@@ -1,4 +1,4 @@
-# Aurora module installe
+# Aurora module installer
 A bash script to automate the initial stuff for new `css` modules.
 
 ### Install
